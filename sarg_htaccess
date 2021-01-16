@@ -1,0 +1,7 @@
+AuthUserFile /usr/local/sarg/passwd
+AuthName "SARG, Restricted Access"
+AuthType Basic
+<Limit GET POST>
+Require user admin %u
+</LIMIT>
+

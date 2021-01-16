@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC '-//OASIS//DTD DocBook XML V4.5//EN'
+                         'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd'>
+
+<article lang="en">
+<title>SARG</title>
+
+<refentry id="sarg">
+
+  <refentryinfo>
+    <productname>sarg</productname>
+    <date>12 Nov 2015</date>
+
+    <author>
+      <firstname>Frédéric</firstname>
+      <surname>Marchal</surname>
+      <contrib>Docbook version of the manual page</contrib>
+      <email>fmarchal@users.sourceforge.net</email>
+    </author>
+
+    <author>
+      <firstname>Billy</firstname>
+      <surname>Newsom</surname>
+      <contrib>Revision of the manual page</contrib>
+    </author>
+
+    <author>
+      <firstname>Luigi</firstname>
+      <surname>Gangitano</surname>
+      <contrib>Author of the first manual page</contrib>
+      <email>gangitano@lugroma3.org</email>
+    </author>
+
+    <copyright>
+      <year>2012</year>
+      <holder>Frédéric Marchal</holder>
+    </copyright>
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>sarg</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>sarg</refname>
+    <refpurpose>Squid Analysis Report Generator</refpurpose>
+    <!--<refclass>UNIX/Linux</refclass>-->
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>sarg</command>
+      <arg choice="opt">options</arg>
+      <arg choice="opt" rep="repeat">logfile</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para>
+<command>sarg</command> is a log file parser and analyzer for the <ulink url="http://www.squid-cache.org/">Squid Web Proxy Cache</ulink>.
+It allows you to view "where" your users are going to on
+the Internet.
+</para>
+<para>
+<command>sarg</command> generates reports in HTML with fields such as: users,
+IP Addresses, bytes, sites, and times. These HTML files can appear in your
+web server's directory for browsing by users or administrators. You may also
+have <command>sarg</command> email the reports to the Squid Cache administrator.
+</para>
+<para>
+<command>sarg</command> can read <application>squid</application> or <application>Microsoft ISA</application> access logs.
+Optionally, it can complement the reports with the log of a Squid filter/redirector such as
+<ulink url="http://www.squidguard.org/">squidGuard</ulink>.
+</para>
+</refsect1>
+
+<refsect1><title>Options</title>
+<para>
+A summary of options is included below.
+</para>
+
+<variablelist>
+
+<varlistentry><term><option>-h</option> <option>--help</option></term>
+<listitem>
+<para>
+Show summary of options.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-a hostname|ip address</option></term>
+<listitem>
+<para>
+Limits report to records containing the specified hostname/ip address
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-b <replaceable>filename</replaceable></option></term>
+<listitem>
+<para>
+Enables UserAgent log and writes it to <replaceable>filename</replaceable>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-c <replaceable>filename</replaceable></option></term>
+<listitem>
+<para>
+Read <replaceable>filename</replaceable> for a list of the web hosts to exclude from the report. See <xref linkend="ExcludeHostFile"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>--convert</option></term>
+<listitem>
+<para>
+Convert a <application>squid</application> log file date/time field to a human-readable format.
+All the log files are read and output as one text on the standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>--css</option></term>
+<listitem>
+<para>
+Output, on the standard output, the internal css <command>sarg</command> inlines in the reports. You can redirect
+the output to a file of your choice and edit it. Then you can override the internal css with
+<parameter>external_css_file</parameter> in <filename>sarg.conf</filename>.
+</para>
+<para>
+Using an external css can reduce the size of the report file. If you are short on disk space, you may consider
+exporting the css as explained above.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-d <replaceable>date</replaceable></option></term>
+<listitem>
+<para>
+Use <replaceable>date</replaceable> to restrict the report to some date range during log file processing.
+Format for <replaceable>date</replaceable> is <userinput>dd/mm/yyyy-dd/mm/yyyy</userinput>
+or a single date <userinput>dd/mm/yyyy</userinput>. Date ranges can also be specified as
+<parameter>day-<constant>n</constant></parameter>, <parameter>week-<constant>n</constant></parameter>,
+or <parameter>month-<constant>n</constant></parameter> where <constant>n</constant>
+is the number of days, weeks or months to jump backward. Note that there is no spaces around the hyphen.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-e <replaceable>email</replaceable></option></term>
+<listitem>
+<para>
+Sends report to <replaceable>email</replaceable> (stdout for console).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-f <replaceable>filename</replaceable></option></term>
+<listitem>
+<para>
+Reads configuration from <replaceable>filename</replaceable>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-g e|u</option></term>
+<listitem>
+<para>
+Sets date format in generated reports.
+<simplelist>
+<member>e = Europe -> dd/mm/yy</member>
+<member>u = USA    -> mm/dd/yy</member>
+</simplelist>
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-i</option></term>
+<listitem>
+<para>
+Generates reports by user and ip address.
+</para>
+<note>
+<simpara>
+This requires the <replaceable>report_type</replaceable>
+option in config file to contain "users_sites".
+</simpara>
+</note>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>--keeplogs</option></term>
+<listitem>
+<para>
+Don't delete any old report. It is equivalent to setting <option>--lastlog 0</option> but is
+provided for convenience.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-l <replaceable>filename</replaceable></option></term>
+<listitem>
+<para>
+Uses <replaceable>filename</replaceable> as the input log. This option can be repeated up to 255 times to read
+multiple files. If the files end with the extension <filename>.gz</filename>, <filename>.bz2</filename> or
+<filename>.Z</filename> they are decompressed. If the file name is just
+<replaceable>-</replaceable>, the log file is read from standard input. In that case, it cannot be compressed.
+</para>
+<para>
+This option is kept for compatibility with older versions of sarg but, starting with <application>sarg 2.3</application>,
+the log files may be named on the command line without the <option>-l</option>
+option. It allows the use of wildcards on the command line. Make sure you don't exceed the limit of 255 files.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>--lastlog <replaceable>n</replaceable></option></term>
+<listitem>
+<para>
+Limit the number of logs kept in the output directory to <replaceable>n</replaceable>. Any supernumerary report
+is deleted starting with the oldest report. The value of <replaceable>n</replaceable> must be positive or zero.
+A value of zero means no report should be deleted.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-L <replaceable>filename</replaceable></option></term>
+<listitem>
+<para>
+Reads a proxy redirector log file such as one created by <application>squidGuard</application> or <application>Rejik</application>.
+If you use this option, you may want to configure <replaceable>redirector_log_format</replaceable>
+in <filename>sarg.conf</filename> to match the output format of your web content filtering program.
+This option can be repeated up to 64 times to read multiple files.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-n</option></term>
+<listitem>
+<para>
+Enables ip address resolution.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-o <replaceable>dir</replaceable></option></term>
+<listitem>
+<para>
+Writes report in <replaceable>dir</replaceable>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-p</option></term>
+<listitem>
+<para>
+Generates reports using ip address instead of userid.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-P <replaceable>prefix</replaceable></option> <option>--splitprefix <replaceable>prefix</replaceable></option></term>
+<listitem>
+<para>
+This option must be used with <option>--split</option>. If it is provided, the input log is split among
+several files each containing one day. The name of the output files is made of the <replaceable>prefix</replaceable>
+and the date formated as <literal>-YYYY-MM-DD</literal>.
+</para>
+<para>
+The output files are written in the output directory
+specified with <option>-o</option> or in the current directory.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-r</option></term>
+<listitem>
+<para>
+Output the realtime report on the standard output and exit.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-s <replaceable>string</replaceable></option></term>
+<listitem>
+<para>
+Limits report to the site specified by <replaceable>string</replaceable>
+[eg. www.debian.org]
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>--split</option></term>
+<listitem>
+<para>
+Split the squid log file and output it as text on the standard output omitting the dates outside of the
+range specified by the <option>-d</option> parameter.
+If it is combined with <option>--convert</option>
+the dates are also converted to a human-readable format.
+</para>
+<para>
+Combined with <option>-P</option>, the log is written in several files each containing one day of the
+original log.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>--statistics</option></term>
+<listitem>
+<para>
+Writes some statistics about the execution time. The statistics include the
+total execution time; the number of records read in the input log files and the
+time it took to read them; the number of records and users processed and the
+time it took to process them.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-t <replaceable>string</replaceable></option></term>
+<listitem>
+<para>
+Limits the records included in the report based on time-of-day. Format for
+<replaceable>string</replaceable> is <userinput>HH:MM</userinput> or <userinput>HH:MM-HH:MM</userinput>.
+The former reports only the requested time. The latter reports any entry falling within the requested
+range. This limit complement the limit imposed by option <option>-d</option>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-u <replaceable>user</replaceable></option></term>
+<listitem>
+<para>
+Limits reports to <replaceable>user</replaceable> activities.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-v</option></term>
+<listitem>
+<para>
+Write sarg version and exit.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-w <replaceable>dir</replaceable></option></term>
+<listitem>
+<para>
+Store temporary files in <replaceable>dir</replaceable>. In fact, <command>sarg</command> stores its temporary files in
+the <filename class="directory">sarg</filename> subdirectory of <replaceable>dir</replaceable>. Be sure to set the HTML
+output directory to a place outside of the temporary directory or sarg may fail or delete the report when it completes its task.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-x</option></term>
+<listitem>
+<para>
+Writes debug messages to <filename class="devicefile">stdout</filename>
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-z</option></term>
+<listitem>
+<para>
+Writes process messages to <filename class="devicefile">stdout</filename>.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</refsect1>
+
+<refsect1 id="ExcludeHostFile"><title>Host exclusion file</title>
+<para>Sarg can be told to exclude visited hosts from the report by providing it
+with a file containing one host to exclude per line. The "host" may be one of the following:
+</para>
+<itemizedlist>
+<listitem><para>a full host name,</para></listitem>
+<listitem><para>a host name starting with a wildcard (*) to match any prefix,</para></listitem>
+<listitem><para>a single ip address,</para></listitem>
+<listitem><para>a subnet noted a.b.c.d/e.</para></listitem>
+</itemizedlist>
+<example><title>Example of a hosts exclusion file</title>
+<simplelist>
+<member>*.google.com</member>
+<member>10.0.0.0/8</member>
+</simplelist>
+</example>
+
+<para>
+Sarg cannot exclude IPv6 addresses at the moment.
+</para>
+
+</refsect1>
+
+<refsect1><title>See also</title>
+<para>
+squid(8)
+</para>
+</refsect1>
+
+<refsect1><title>Authors</title>
+<para>
+This manual page was written by <personname><firstname>Luigi</firstname> <surname>Gangitano</surname></personname>
+<email>gangitano@lugroma3.org</email>,
+for the <systemitem class="osname">Debian GNU/Linux</systemitem> system (but may be used by others). Revised
+by <personname><firstname>Billy</firstname> <surname>Newsom</surname></personname>.
+</para>
+<para>
+Currently maintained by <personname><firstname>Frédéric</firstname> <surname>Marchal</surname></personname>
+<email>fmarchal@users.sourceforge.net</email>.
+</para>
+</refsect1>
+
+</refentry>
+
+</article>

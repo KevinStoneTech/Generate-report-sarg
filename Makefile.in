@@ -1,0 +1,170 @@
+# Makefile.in for sarg
+
+prefix=@prefix@
+datarootdir=@datarootdir@
+datadir=@datadir@
+exec_prefix=@exec_prefix@
+PACKAGE_TARNAME=@PACKAGE_TARNAME@
+docdir      = @docdir@
+CC          = @CC@
+bindir      = @bindir@
+mandir      = @mandir@
+man1dir     = $(mandir)/man1
+sysconfdir  = @sysconfdir@
+SARGPHPDIR  = @SARGPHPDIR@
+FONTDIR     = @FONTDIR@
+IMAGEDIR    = @IMAGEDIR@
+IBINDIR     = -DBINDIR=\"@bindir@\"
+ISYSCONFDIR = -DSYSCONFDIR=\"@sysconfdir@\"
+ISARGPHPDIR = -DSARGPHPDIR=\"@SARGPHPDIR@\"
+IFONTDIR    = -DFONTDIR=\"@FONTDIR@\"
+IIMAGEDIR   = -DIMAGEDIR=\"@IMAGEDIR@\"
+ILOCALEDIR  = -DLOCALEDIR=\"@localedir@\"
+CFLAGS      = @CFLAGS@
+CPPFLAGS    = @CPPFLAGS@
+LDFLAGS     = @LDFLAGS@
+DEFS        = $(IBINDIR) $(ISYSCONFDIR) $(IFONTDIR) $(IIMAGEDIR) $(ISARGPHPDIR) $(ILOCALEDIR) @DEFS@
+LIBS        = @LIBS@ @LIBINTL@ -lm
+SRCDIR      = .
+VPATH       = .
+INSTALL     = cp
+XSL_MAN_STYLESHEET=@XSL_MAN_STYLESHEET@
+XSL_HTML_STYLESHEET=@XSL_HTML_STYLESHEET@
+EXEEXT      = @EXEEXT@
+
+INSTALL_PROGRAM = $(INSTALL)
+
+SRCS = util.c log.c report.c topuser.c email.c sort.c html.c \
+   index.c getconf.c usage.c decomp.c ip2name.c ip2name_dns.c \
+   useragent.c exclude.c convlog.c totday.c repday.c datafile.c\
+   indexonly.c splitlog.c lastlog.c topsites.c siteuser.c css.c \
+   smartfilter.c denied.c authfail.c dichotomic.c \
+   redirector.c auth.c download.c grepday.c ip2name_exec.c \
+   dansguardian_log.c dansguardian_report.c realtime.c btree_cache.c \
+   usertab.c userinfo.c longline.c url.c fnmatch.c stringbuffer.c \
+   filelist.c readlog.c alias.c fileobject.c \
+   readlog_squid.c readlog_sarg.c readlog_extlog.c readlog_common.c
+
+all: sarg
+
+*.o: include/conf.h include/info.h include/defs.h
+
+alias.o: include/alias.h include/stringbuffer.h
+authfail.o: include/readlog.h
+denied.o: include/readlog.h
+download.o: include/readlog.h
+filelist.o: include/stringbuffer.h
+log.o: include/readlog.h
+readlog.o: include/readlog.h
+readlog_common.o: include/readlog.h
+readlog_extlog.o: include/readlog.h
+readlog_sarg.o: include/readlog.h
+readlog_squid.o: include/readlog.h
+stringbuffer.o: include/stringbuffer.h
+userinfo.o: include/stringbuffer.h include/alias.h
+fileobject.o: include/fileobject.h
+
+OBJS = $(SRCS:.c=.o)
+
+DISTFILES = $(SRCS) ABOUT-NLS
+
+SUBDIRS = po
+.PHONY: all install clean uninstall mostlyclean distclean update-po doc $(SUBDIRS)
+
+.c.o:
+	$(CC) -c -I. $(CPPFLAGS) $(DEFS) $(CFLAGS) $<
+
+sarg: $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o $@ $(LIBS) $(LIBCRYPT)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
+
+doc: sarg.1 sarg_manpage.html
+
+sarg.1: sarg_manpage.xml
+	echo "Making manual page"
+	xmllint --nonet --valid --noout $<
+	xsltproc --stringparam man.output.encoding latin1 --nonet "$(XSL_MAN_STYLESHEET)" $<
+#	docbook2man.pl $<
+
+sarg_manpage.html: sarg_manpage.xml
+	echo "Making html manual page"
+	xmllint --nonet --valid --noout $<
+	xsltproc --stringparam use.id.as.filename 1 --stringparam root.filename sarg_manpage --nonet "$(XSL_HTML_STYLESHEET)" $<
+
+install: all install-po
+	-@if test ! -d $(DESTDIR)$(bindir); then \
+		echo "creating $(DESTDIR)$(bindir)"; \
+		mkdir -p $(DESTDIR)$(bindir); \
+	fi
+	-@if test ! -d $(DESTDIR)$(man1dir); then \
+		echo "creating $(DESTDIR)$(man1dir)"; \
+		mkdir -p $(DESTDIR)$(man1dir); \
+	fi
+	-@if test ! -d $(DESTDIR)$(sysconfdir); then \
+		echo "creating $(DESTDIR)$(sysconfdir)"; \
+		mkdir -p $(DESTDIR)$(sysconfdir); \
+	fi
+	-@if test ! -d $(DESTDIR)$(IMAGEDIR); then \
+		echo "Creating $(DESTDIR)$(IMAGEDIR)"; \
+		mkdir -p $(DESTDIR)$(IMAGEDIR); \
+	fi
+	$(INSTALL_PROGRAM) sarg$(EXEEXT) $(DESTDIR)$(bindir)/sarg$(EXEEXT);
+	chmod 755 $(DESTDIR)$(bindir)/sarg$(EXEEXT);
+	$(INSTALL_PROGRAM) sarg.1 $(DESTDIR)$(man1dir)/sarg.1
+	chmod 755 $(DESTDIR)$(man1dir)/sarg.1
+	@if test ! -f $(DESTDIR)$(sysconfdir)/sarg.conf; then \
+		echo "cp $(DESTDIR)$(sysconfdir)/sarg.conf"; \
+		cp sarg.conf $(DESTDIR)$(sysconfdir)/sarg.conf; \
+	else \
+		cp sarg.conf $(DESTDIR)$(sysconfdir)/sarg.conf.default; \
+	fi
+	cp ./exclude_codes $(DESTDIR)$(sysconfdir);
+	cp ./user_limit_block $(DESTDIR)$(sysconfdir);
+	cp -r ./images/* $(DESTDIR)$(IMAGEDIR);
+	-@if test -n "$(FONTDIR)" ; then \
+		if test ! -d "$(DESTDIR)$(FONTDIR)" ; then \
+			echo "Creating $(DESTDIR)$(FONTDIR)"; \
+			mkdir -p "$(DESTDIR)$(FONTDIR)"; \
+		fi; \
+		cp -r ./fonts/* "$(DESTDIR)$(FONTDIR)"; \
+	fi
+	cp -r ./css.tpl $(DESTDIR)$(sysconfdir);
+	-@if test -n "$(SARGPHPDIR)" -a -d "$(DESTDIR)$(SARGPHPDIR)"; then \
+		cp -r ./sarg-php $(DESTDIR)$(SARGPHPDIR); \
+	fi
+
+uninstall: uninstall-po
+	rm -f $(DESTDIR)$(bindir)/sarg
+	rm -f $(DESTDIR)$(man1dir)/sarg.1
+
+TAGS: $(SRCS)
+	etags $(SRCS)
+
+clean: clean-po
+	rm -f sarg *.o core
+
+mostlyclean: clean
+
+distclean: clean
+	rm -f Makefile config.status config.cache config.log
+
+realclean: distclean
+	rm -f TAGS
+
+install-po:
+	$(MAKE) -C po install
+
+uninstall-po:
+	$(MAKE) -C po uninstall
+
+clean-po:
+	$(MAKE) -C po clean
+
+update-po:
+	$(MAKE) -C po update-po
+
+po-from-tp:
+	@echo "Fetching latest po files from translationprojetc.org"
+	rsync -Lrtvz -u  translationproject.org::tp/latest/sarg/  po

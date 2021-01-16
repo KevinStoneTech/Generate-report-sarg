@@ -1,0 +1,74 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Evgeniy Yakushev <yen81@mail.ru>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sarg-squidGuard 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-14 12:46+0200\n"
+"PO-Revision-Date: 2015-09-10 21:17+0300\n"
+"Last-Translator: Evgeniy Yakushev <yen81@mail.ru>\n"
+"Language-Team: русский <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: sarg-block-it.php:32
+msgid "No URL passed as argument"
+msgstr "Не передан URL в качестве аргумента"
+
+#: sarg-block-it.php:40 sarg-squidguard-block2.php:62
+#, php-format
+msgid "Could not open file: %s"
+msgstr "Не удалось открыть файл: %s"
+
+#: sarg-block-it.php:47 sarg-squidguard-block2.php:69
+msgid "Write error"
+msgstr "Ошибка записи"
+
+#: sarg-block-it.php:50 sarg-squidguard-block2.php:72
+msgid "Done!"
+msgstr "Готово!"
+
+#: sarg-block-it.php:52 sarg-squidguard-block2.php:74
+#, php-format
+msgid "<a href=\"%s\">Return</a> to Sarg."
+msgstr "<a href=\"%s\">Вернуться</a> к Sarg."
+
+#: sarg-squidguard-block2.php:32
+msgid "No file passed as argument"
+msgstr "Не переданы файлы в качестве аргумента"
+
+#: sarg-squidguard-block2.php:38
+msgid "No url passed as argument"
+msgstr "Не передан URL в качестве аргумента"
+
+#: sarg-squidguard-block2.php:52
+#, php-format
+msgid "Invalid locale %s"
+msgstr "Недопустимая локаль %s"
+
+#: sarg-squidguard-block.php:37
+#, php-format
+msgid "Invalid locale: %s"
+msgstr "Недопустимая локаль: %s"
+
+#: sarg-squidguard-block.php:48
+msgid "No URL to block"
+msgstr "Нет блокируемых URL"
+
+#: sarg-squidguard-block.php:66
+msgid "Sarg-SquidGuard - URL Blocking"
+msgstr "Sarg-SquidGuard - блокировка URL"
+
+#: sarg-squidguard-block.php:69
+#, php-format
+msgid "Choose the rule set where %s will be added"
+msgstr "Выберете набор правил, куда будет добавлен %s"
+
